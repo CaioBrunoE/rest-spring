@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import br.com.caiobruno.restspring.data.vo.v1.PersonVO;
+import br.com.caiobruno.restspring.data.vo.v2.PersonVOV2;
 import br.com.caiobruno.restspring.mapper.DozerMapper;
+import br.com.caiobruno.restspring.mapper.custom.PersonMapper;
 import br.com.caiobruno.restspring.model.Person;
 import br.com.caiobruno.restspring.reposittories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class PersonServices {
 
     @Autowired
     PersonRepository repository;
+
+    @Autowired
+    PersonMapper mapper;
 
     public List<PersonVO> findAll() {
         logger.info("Finding all people!");
@@ -44,7 +49,7 @@ public class PersonServices {
 
         var entity = DozerMapper.parseObject(person, Person.class);
 
-        var vo = DozerMapper.parseObject(repository.save(entity),PersonVO.class);
+        var vo = DozerMapper.parseObject(repository.save(entity), PersonVO.class);
 
         return vo;
     }
@@ -62,7 +67,7 @@ public class PersonServices {
         entity.setGender(person.getGender());
 
 
-        var vo = DozerMapper.parseObject(repository.save(entity),PersonVO.class);
+        var vo = DozerMapper.parseObject(repository.save(entity), PersonVO.class);
 
         return vo;
     }
@@ -74,5 +79,17 @@ public class PersonServices {
         var entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
         repository.delete(entity);
+    }
+
+    public PersonVOV2 createV2(PersonVOV2 person) {
+
+        logger.info("Creating one person V2!");
+
+
+        var entity = mapper.convertVoToEntity(person);
+
+        var vo = mapper.convertEntityToVo(repository.save(entity));
+
+        return vo;
     }
 }
