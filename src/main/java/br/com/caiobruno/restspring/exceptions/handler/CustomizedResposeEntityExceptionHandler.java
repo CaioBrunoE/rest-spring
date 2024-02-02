@@ -1,7 +1,7 @@
 package br.com.caiobruno.restspring.exceptions.handler;
 
 import br.com.caiobruno.restspring.exceptions.ExceptionsResponse;
-import br.com.caiobruno.restspring.exceptions.UnsupportedMathOperationException;
+import br.com.caiobruno.restspring.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,13 +25,13 @@ public class CustomizedResposeEntityExceptionHandler extends ResponseEntityExcep
         return new ResponseEntity<>(exceptionsResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(UnsupportedMathOperationException.class)
-    public final ResponseEntity<ExceptionsResponse> handleBadRequest(Exception ex, WebRequest request){
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public final ResponseEntity<ExceptionsResponse> ResourceNotFoundException(Exception ex, WebRequest request){
         ExceptionsResponse exceptionsResponse = new ExceptionsResponse(
                 new Date(), ex.getMessage(), request.getDescription(false)
         );
 
-        return new ResponseEntity<>(exceptionsResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(exceptionsResponse, HttpStatus.NOT_FOUND);
     }
 
 
