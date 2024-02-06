@@ -1,6 +1,7 @@
 package br.com.caiobruno.restspring.exceptions.handler;
 
 import br.com.caiobruno.restspring.exceptions.ExceptionsResponse;
+import br.com.caiobruno.restspring.exceptions.RequiredObjectIsNullException;
 import br.com.caiobruno.restspring.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,14 @@ public class CustomizedResposeEntityExceptionHandler extends ResponseEntityExcep
         );
 
         return new ResponseEntity<>(exceptionsResponse, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(RequiredObjectIsNullException.class)
+    public final ResponseEntity<ExceptionsResponse> handleBadRequestException(Exception ex, WebRequest request){
+        ExceptionsResponse exceptionsResponse = new ExceptionsResponse(
+                new Date(), ex.getMessage(), request.getDescription(false)
+        );
+
+        return new ResponseEntity<>(exceptionsResponse, HttpStatus.BAD_REQUEST);
     }
 
 
