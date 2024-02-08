@@ -1,4 +1,4 @@
-package br.com.caiobruno.restspring.integrationTets;
+package br.com.caiobruno.restspring;
 
 import java.util.Map;
 import java.util.stream.Stream;
