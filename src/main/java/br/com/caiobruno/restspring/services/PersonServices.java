@@ -1,6 +1,7 @@
 package br.com.caiobruno.restspring.services;
 
 import br.com.caiobruno.restspring.controllers.PersonController;
+import br.com.caiobruno.restspring.data.vo.v1.BookVO;
 import br.com.caiobruno.restspring.data.vo.v1.PersonVO;
 import br.com.caiobruno.restspring.data.vo.v2.PersonVOV2;
 import br.com.caiobruno.restspring.exceptions.RequiredObjectIsNullException;
@@ -47,7 +48,7 @@ public class PersonServices {
 
         logger.info("Finding one person!");
 
-        var entity = repository.findById(id)
+        Person entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
         var vo = DozerMapper.parseObject(entity, PersonVO.class);
         vo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
@@ -56,15 +57,16 @@ public class PersonServices {
 
     }
 
-    public PersonVO create(PersonVO person) {
+    public PersonVO create(PersonVO personvo) {
 
-        if(person == null) throw new RequiredObjectIsNullException();
+        if(personvo == null) throw new RequiredObjectIsNullException();
 
         logger.info("Creating one person!");
 
-        var entity = DozerMapper.parseObject(person, Person.class);
+        var entity = DozerMapper.parseObject(personvo, Person.class);
 
         var vo = DozerMapper.parseObject(repository.save(entity), PersonVO.class);
+
         vo.add(linkTo(methodOn(PersonController.class).findById(vo.getKey())).withSelfRel());
 
         return vo;
@@ -111,4 +113,6 @@ public class PersonServices {
 
         return vo;
     }
+
 }
+
