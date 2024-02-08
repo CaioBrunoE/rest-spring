@@ -1,7 +1,7 @@
-package br.com.caiobruno.restspring.integrationTets.IntegrationTestSwegger;
+package br.com.caiobruno.restspring.integrationTests.Swegger;
 
 import br.com.caiobruno.restspring.configs.TestConfig;
-import br.com.caiobruno.restspring.integrationTets.AbstractIntegrationTest;
+import br.com.caiobruno.restspring.AbstractIntegrationTest;
 
 import static io.restassured.RestAssured.given;
 
