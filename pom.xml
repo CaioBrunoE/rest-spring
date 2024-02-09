@@ -20,6 +20,7 @@
         <testcontainers.version>1.16.3</testcontainers.version>
         <rest-assured.version>4.5.0</rest-assured.version>
         <java-jwt.version>3.18.3</java-jwt.version>
+        <java-jwt.version>3.18.3</java-jwt.version>
 
     </properties>
     <dependencies>
@@ -40,11 +41,20 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
+        <!--Security -->
+
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>${java-jwt.version}</version>
+        </dependency>
+
         <!--Hateoas-->
         <dependency>
             <groupId>org.springframework.hateoas</groupId>
             <artifactId>spring-hateoas</artifactId>
         </dependency>
+
 
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
