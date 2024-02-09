@@ -1,4 +1,4 @@
-package br.com.caiobruno.restspring.securityJwt;
+package br.com.caiobruno.restspring.security.jwt;
 
 import br.com.caiobruno.restspring.data.vo.v1.security.TokenVO;
 import br.com.caiobruno.restspring.exceptions.InvalidJwtAuthenticationException;
@@ -18,14 +18,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
 
 @Service
-public class JetTokenProvinder {
+public class JwtTokenProvinder {
 
 
     @Value("${security.jwt.token.secret-key:secret}")
