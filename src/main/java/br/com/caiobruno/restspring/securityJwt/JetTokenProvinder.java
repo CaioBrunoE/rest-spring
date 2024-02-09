@@ -1,13 +1,22 @@
 package br.com.caiobruno.restspring.securityJwt;
 
 import br.com.caiobruno.restspring.data.vo.v1.security.TokenVO;
+import br.com.caiobruno.restspring.exceptions.InvalidJwtAuthenticationException;
+import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.JWTVerifier;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -40,14 +49,76 @@ public class JetTokenProvinder {
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
         var accessToken = getAccessToken(usename, roles, now, validity);
-        var refreshToken = getAccessToken(usename, roles, now);
+        var refreshToken = getrefreshToken(usename, roles, now);
         
         return new TokenVO(usename, true, now, validity, accessToken, refreshToken);
     }
 
-    private String getAccessToken(String usename, List<String> roles, Date now) {
+    private String getAccessToken(String usename, List<String> roles, Date now, Date validity) {
+
+        String issuerUrl = ServletUriComponentsBuilder
+                .fromCurrentContextPath().build().toUriString();
+        return JWT.create()
+                .withClaim("roles",roles)
+                .withIssuedAt(now)
+                .withExpiresAt(validity)
+                .withSubject(usename)
+                .withIssuer(issuerUrl)
+                .sign(algorithm)
+                .strip();
+    }
+    private String getrefreshToken(String usename, List<String> roles, Date now) {
+
+        Date validityrefreshToken = new Date(now.getTime() + (validityInMilliseconds * 3));
+
+        return JWT.create()
+                .withClaim("roles",roles)
+                .withIssuedAt(now)
+                .withExpiresAt(validityrefreshToken)
+                .withSubject(usename)
+                .sign(algorithm)
+                .strip();
+
     }
 
-    private String getAccessToken(String usename, List<String> roles, Date now, Date validity) {
+    public Authentication getAuthentication (String token){
+        DecodedJWT decodedJWT = decodedToken(token);
+       UserDetails userDetails =this.userDetailsService.
+                loadUserByUsername(decodedJWT.getSubject());
+       return  new UsernamePasswordAuthenticationToken(userDetails, "",userDetails.getAuthorities());
+    }
+
+    private DecodedJWT decodedToken(String token) {
+
+        Algorithm alg = Algorithm.HMAC256(secretKey.getBytes());
+        JWTVerifier verifier = JWT.require(alg).build();
+        DecodedJWT decodedJWT = verifier.verify(token);
+
+        return decodedJWT;
+    }
+
+    public  String resolveToken(HttpServletRequest req){
+
+        String bearerToken = req.getHeader("Authorization");
+
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")){
+            return  bearerToken.substring("Bearer ".length());
+        }
+
+        return null;
+    }
+
+    public boolean validateToken(String token ){
+        DecodedJWT decodedJWT = decodedToken(token);
+
+        try {
+            if (decodedJWT.getExpiresAt().before(new Date())){
+                return false;
+            }
+            return true;
+
+        }catch (Exception e){
+            throw  new InvalidJwtAuthenticationException("Expired or invalid JWT token");
+        }
     }
 }

@@ -1,6 +1,6 @@
 package br.com.caiobruno.restspring.integrationTests.controller;
 
-import br.com.caiobruno.restspring.AbstractIntegrationTest;
+import br.com.caiobruno.restspring.integrationTests.AbstractIntegrationTest;
 import br.com.caiobruno.restspring.configs.TestConfig;
 import br.com.caiobruno.restspring.integrationTests.vo.PersonVO;
 import io.restassured.builder.RequestSpecBuilder;
