@@ -24,6 +24,8 @@ spring:
 server:
   port: ${port:8081}
 spring-doc:
-  pathsToMatch: /api/**/v1/**
+  pathsToMatch:
+    - /auth/**
+    - /api/**/v1/**
   swagger-ui:
     use-root-path: true

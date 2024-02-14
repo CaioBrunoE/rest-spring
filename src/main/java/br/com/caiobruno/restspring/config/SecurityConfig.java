@@ -1,11 +1,10 @@
 package br.com.caiobruno.restspring.config;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
 import br.com.caiobruno.restspring.security.jwt.JwtTokenFilter;
-import br.com.caiobruno.restspring.security.jwt.JwtTokenProvinder;
+import br.com.caiobruno.restspring.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,12 +21,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
+
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
 
     @Autowired
-    private JwtTokenProvinder tokenProvider;
+    private JwtTokenProvider tokenProvider;
 
     @Bean
     PasswordEncoder passwordEncoder() {
