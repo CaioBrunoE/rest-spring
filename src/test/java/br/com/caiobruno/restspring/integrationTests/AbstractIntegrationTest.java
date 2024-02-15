@@ -1,4 +1,4 @@
-package br.com.caiobruno.restspring.integrationTests;
+package br.com.caiobruno.restspring;
 
 import java.util.Map;
 import java.util.stream.Stream;
@@ -16,7 +16,7 @@ public class AbstractIntegrationTest {
 
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
-        static MySQLContainer<?> mysql = new MySQLContainer<>("mysql: 8.0.36");
+        static MySQLContainer<?> mysql = new MySQLContainer<>("mysql");
 
         private static void startContainers() {
             Startables.deepStart(Stream.of(mysql)).join();
