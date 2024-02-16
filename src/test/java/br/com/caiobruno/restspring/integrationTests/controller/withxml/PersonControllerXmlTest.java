@@ -150,12 +150,15 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
         assertEquals("Brasília - DF - Brasil", persistedPerson.getAddress());
         assertEquals("Male", persistedPerson.getGender());
     }
+
+
     @Test
     @Order(3)
     public void testDisablePersonById() throws JsonMappingException, JsonProcessingException {
 
         var content = given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
                 .pathParam("id", person.getId())
                 .when()
                 .patch("{id}")
@@ -236,6 +239,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
                 .then()
                 .statusCode(204);
     }
+
     @Test
     @Order(6)
     public void testFindAll() throws JsonMappingException, JsonProcessingException {
@@ -277,6 +281,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
         assertNotNull(foundPersonSix.getLastName());
         assertNotNull(foundPersonSix.getAddress());
         assertNotNull(foundPersonSix.getGender());
+
         assertTrue(foundPersonSix.getEnabled());
 
         assertEquals(9, foundPersonSix.getId());
@@ -286,6 +291,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
         assertEquals("Mvezo – South Africa", foundPersonSix.getAddress());
         assertEquals("Male", foundPersonSix.getGender());
     }
+
 
     @Test
     @Order(7)

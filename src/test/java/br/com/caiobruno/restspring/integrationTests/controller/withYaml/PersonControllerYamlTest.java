@@ -163,7 +163,6 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
         assertNotNull(persistedPerson.getGender());
 
         assertTrue(persistedPerson.getEnabled());
-
         assertEquals(person.getId(), persistedPerson.getId());
 
         assertEquals("Nelson", persistedPerson.getFirstName());
@@ -172,16 +171,19 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
         assertEquals("Male", persistedPerson.getGender());
     }
 
+
     @Test
     @Order(3)
     public void testDisablePersonById() throws JsonMappingException, JsonProcessingException {
 
         var persistedPerson = given().spec(specification)
-                .config(RestAssuredConfig.config()
-                        .encoderConfig(EncoderConfig.encoderConfig()
-                                .encodeContentTypeAs(
-                                        TestConfigs.CONTENT_TYPE_YML,
-                                        ContentType.TEXT)))
+                .config(
+                        RestAssuredConfig
+                                .config()
+                                .encoderConfig(EncoderConfig.encoderConfig()
+                                        .encodeContentTypeAs(
+                                                TestConfigs.CONTENT_TYPE_YML,
+                                                ContentType.TEXT)))
                 .contentType(TestConfigs.CONTENT_TYPE_YML)
                 .accept(TestConfigs.CONTENT_TYPE_YML)
                 .pathParam("id", person.getId())
@@ -211,6 +213,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
         assertEquals("Brasília - DF - Brasil", persistedPerson.getAddress());
         assertEquals("Male", persistedPerson.getGender());
     }
+
     @Test
     @Order(4)
     public void testFindById() throws JsonMappingException, JsonProcessingException {
@@ -309,7 +312,6 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
         assertNotNull(foundPersonOne.getGender());
         assertTrue(foundPersonOne.getEnabled());
 
-
         assertEquals(1, foundPersonOne.getId());
 
         assertEquals("Ayrton", foundPersonOne.getFirstName());
@@ -324,6 +326,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
         assertNotNull(foundPersonSix.getLastName());
         assertNotNull(foundPersonSix.getAddress());
         assertNotNull(foundPersonSix.getGender());
+
         assertTrue(foundPersonSix.getEnabled());
 
         assertEquals(9, foundPersonSix.getId());
@@ -333,6 +336,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
         assertEquals("Mvezo – South Africa", foundPersonSix.getAddress());
         assertEquals("Male", foundPersonSix.getGender());
     }
+
 
     @Test
     @Order(7)
