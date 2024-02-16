@@ -1,7 +1,6 @@
 package br.com.caiobruno.restspring.services;
 
 import br.com.caiobruno.restspring.controllers.PersonController;
-import br.com.caiobruno.restspring.data.vo.v1.BookVO;
 import br.com.caiobruno.restspring.data.vo.v1.PersonVO;
 import br.com.caiobruno.restspring.data.vo.v2.PersonVOV2;
 import br.com.caiobruno.restspring.exceptions.RequiredObjectIsNullException;
@@ -10,11 +9,13 @@ import br.com.caiobruno.restspring.mapper.DozerMapper;
 import br.com.caiobruno.restspring.mapper.custom.PersonMapper;
 import br.com.caiobruno.restspring.model.Person;
 import br.com.caiobruno.restspring.reposittories.PersonRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -31,18 +32,16 @@ public class PersonServices {
     @Autowired
     PersonMapper mapper;
 
-    public List<PersonVO> findAll() {
+    public Page<PersonVO> findAll(Pageable pageable) {
         logger.info("Finding all people!");
 
-        List<Person> entityList = repository.findAll();
+        var personPage = repository.findAll(pageable);
 
-        var persons =  DozerMapper.parseListObjects(entityList, PersonVO.class);
+        var personVoPage = personPage.map(p-> DozerMapper.parseObject(p, PersonVO.class));
 
-        persons
-                .stream()
-                .forEach(p->p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
+        personVoPage.map(p->p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
 
-        return persons;
+        return personVoPage;
     }
 
     public PersonVO findById(Long id) {
