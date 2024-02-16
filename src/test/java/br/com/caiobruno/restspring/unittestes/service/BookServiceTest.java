@@ -1,4 +1,10 @@
-package br.com.caiobruno.restspring.service;
+package br.com.caiobruno.restspring.unittestes.service;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Optional;
 
 import br.com.caiobruno.restspring.data.vo.v1.BookVO;
 import br.com.caiobruno.restspring.exceptions.RequiredObjectIsNullException;
@@ -16,17 +22,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
-
-
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-class BookServiceTest {
+class BookServicesTest {
 
     MockBook input;
 

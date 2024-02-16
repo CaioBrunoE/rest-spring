@@ -1,12 +1,4 @@
-package br.com.caiobruno.restspring.service;
-
-
-import br.com.caiobruno.restspring.data.vo.v1.PersonVO;
-import br.com.caiobruno.restspring.exceptions.RequiredObjectIsNullException;
-import br.com.caiobruno.restspring.model.Person;
-import br.com.caiobruno.restspring.reposittories.PersonRepository;
-import br.com.caiobruno.restspring.services.PersonServices;
-import br.com.caiobruno.restspring.unittestes.mapper.mocks.MockPerson;
+package br.com.caiobruno.restspring.unittestes.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -14,6 +6,12 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
+import br.com.caiobruno.restspring.data.vo.v1.PersonVO;
+import br.com.caiobruno.restspring.exceptions.RequiredObjectIsNullException;
+import br.com.caiobruno.restspring.model.Person;
+import br.com.caiobruno.restspring.reposittories.PersonRepository;
+import br.com.caiobruno.restspring.services.PersonServices;
+import br.com.caiobruno.restspring.unittestes.mapper.mocks.MockPerson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -27,7 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class PersonServiceTest {
+class PersonServicesTest {
 
     MockPerson input;
 
@@ -44,7 +42,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void testFindById() {
+    void testFindById() {
         Person entity = input.mockEntity(1);
         entity.setId(1L);
 
@@ -63,7 +61,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void testCreate() {
+    void testCreate() {
         Person entity = input.mockEntity(1);
         entity.setId(1L);
 
@@ -88,8 +86,8 @@ public class PersonServiceTest {
         assertEquals("Female", result.getGender());
     }
 
-   @Test
-    public void testCreateWithNullPerson() {
+    @Test
+    void testCreateWithNullPerson() {
         Exception exception = assertThrows(RequiredObjectIsNullException.class, () -> {
             service.create(null);
         });
@@ -102,7 +100,7 @@ public class PersonServiceTest {
 
 
     @Test
-    public void testUpdate() {
+    void testUpdate() {
         Person entity = input.mockEntity(1);
 
         Person persisted = entity;
@@ -131,7 +129,7 @@ public class PersonServiceTest {
 
 
     @Test
-    public void testUpdateWithNullPerson() {
+    void testUpdateWithNullPerson() {
         Exception exception = assertThrows(RequiredObjectIsNullException.class, () -> {
             service.update(null);
         });
@@ -143,7 +141,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void testDelete() {
+    void testDelete() {
         Person entity = input.mockEntity(1);
         entity.setId(1L);
 
@@ -153,7 +151,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void testFindAll() {
+    void testFindAll() {
         List<Person> list = input.mockEntityList();
 
         when(repository.findAll()).thenReturn(list);

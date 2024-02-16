@@ -1,25 +1,24 @@
-package br.com.caiobruno.restspring.integrationTests.controller.withjson;
-
-import static io.restassured.RestAssured.given;
-import static org.junit.Assert.assertNotNull;
+package br.com.caiobruno.restspring.integrationTests.controller.withxml;
 
 import br.com.caiobruno.restspring.configs.TestConfigs;
 import br.com.caiobruno.restspring.integrationTests.testcontainers.AbstractIntegrationTest;
 import br.com.caiobruno.restspring.integrationTests.vo.AccountCredentialsVO;
 import br.com.caiobruno.restspring.integrationTests.vo.TokenVO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import static io.restassured.RestAssured.given;
+import static org.junit.Assert.assertNotNull;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation.class)
-public class AuthControllerJsonTeste extends AbstractIntegrationTest {
+public class AuthControllerXmlTeste extends AbstractIntegrationTest {
 
     private static TokenVO tokenVO;
 
@@ -33,7 +32,7 @@ public class AuthControllerJsonTeste extends AbstractIntegrationTest {
         tokenVO = given()
                 .basePath("/auth/signin")
                 .port(TestConfigs.API_PORT)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
                 .body(user)
                 .when()
                 .post()

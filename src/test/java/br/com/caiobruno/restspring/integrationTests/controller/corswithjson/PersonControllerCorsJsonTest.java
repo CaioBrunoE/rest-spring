@@ -1,32 +1,27 @@
-package br.com.caiobruno.restspring.integrationTests.controller;
+package br.com.caiobruno.restspring.integrationTests.controller.corswithjson;
 
-import static io.restassured.RestAssured.given;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import br.com.caiobruno.restspring.configs.TestConfigs;
-import br.com.caiobruno.restspring.integrationTests.AbstractIntegrationTest;
+import br.com.caiobruno.restspring.integrationTests.testcontainers.AbstractIntegrationTest;
 import br.com.caiobruno.restspring.integrationTests.vo.AccountCredentialsVO;
 import br.com.caiobruno.restspring.integrationTests.vo.PersonVO;
 import br.com.caiobruno.restspring.integrationTests.vo.TokenVO;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import static io.restassured.RestAssured.given;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation.class)
@@ -49,25 +44,17 @@ public class PersonControllerCorsJsonTest extends AbstractIntegrationTest {
 	@Order(0)
 	public void authorization() throws JsonMappingException, JsonProcessingException {
 		AccountCredentialsVO user = new AccountCredentialsVO("caio", "admin123");
-
-		var accessToken = given()
-				.basePath("/auth/signin")
-				.port(TestConfigs.SERVER_PORT)
+		var accessToken = given().basePath("/auth/signin")
+				.port(TestConfigs.API_PORT)
 				.contentType(TestConfigs.CONTENT_TYPE_JSON)
-				.body(user)
-				.when()
-				.post()
-				.then()
-				.statusCode(200)
-				.extract()
-				.body()
-				.as(TokenVO.class)
+				.body(user).when().post()
+				.then().statusCode(200)
+				.extract().body().as(TokenVO.class)
 				.getAccessToken();
 
 		specification = new RequestSpecBuilder()
 				.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
-				.setBasePath("/api/person/v1")
-				.setPort(TestConfigs.SERVER_PORT)
+				.setBasePath("/api/person/v1").setPort(TestConfigs.API_PORT)
 				.addFilter(new RequestLoggingFilter(LogDetail.ALL))
 				.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 				.build();
@@ -107,6 +94,7 @@ public class PersonControllerCorsJsonTest extends AbstractIntegrationTest {
 		assertEquals("Stallman", persistedPerson.getLastName());
 		assertEquals("New York City, New York, US", persistedPerson.getAddress());
 		assertEquals("Male", persistedPerson.getGender());
+
 	}
 
 	@Test
@@ -130,8 +118,43 @@ public class PersonControllerCorsJsonTest extends AbstractIntegrationTest {
 		assertEquals("Invalid CORS request", content);
 	}
 
-	@Test
+	/*@Test
 	@Order(3)
+	public void testDisablePersonById() throws JsonMappingException, JsonProcessingException {
+
+		var content = given().spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.pathParam("id", person.getId())
+				.when()
+				.patch("{id}")
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.asString();
+
+		PersonVO persistedPerson = objectMapper.readValue(content, PersonVO.class);
+		person = persistedPerson;
+
+		Assertions.assertNotNull(persistedPerson);
+
+		Assertions.assertNotNull(persistedPerson.getId());
+		Assertions.assertNotNull(persistedPerson.getFirstName());
+		Assertions.assertNotNull(persistedPerson.getLastName());
+		Assertions.assertNotNull(persistedPerson.getAddress());
+		Assertions.assertNotNull(persistedPerson.getGender());
+
+
+		assertEquals(person.getId(), persistedPerson.getId());
+
+		assertEquals("Nelson", persistedPerson.getFirstName());
+		assertEquals("Piquet Souto Maior", persistedPerson.getLastName());
+		assertEquals("Brasília - DF - Brasil", persistedPerson.getAddress());
+		assertEquals("Male", persistedPerson.getGender());
+	}*/
+
+	@Test
+	@Order(4)
 	public void testFindById() throws JsonMappingException, JsonProcessingException {
 		mockPerson();
 
@@ -158,6 +181,7 @@ public class PersonControllerCorsJsonTest extends AbstractIntegrationTest {
 		assertNotNull(persistedPerson.getAddress());
 		assertNotNull(persistedPerson.getGender());
 
+
 		assertTrue(persistedPerson.getId() > 0);
 
 		assertEquals("Richard", persistedPerson.getFirstName());
@@ -168,7 +192,7 @@ public class PersonControllerCorsJsonTest extends AbstractIntegrationTest {
 
 
 	@Test
-	@Order(4)
+	@Order(5)
 	public void testFindByIdWithWrongOrigin() throws JsonMappingException, JsonProcessingException {
 		mockPerson();
 
@@ -183,8 +207,6 @@ public class PersonControllerCorsJsonTest extends AbstractIntegrationTest {
 				.extract()
 				.body()
 				.asString();
-
-
 		assertNotNull(content);
 		assertEquals("Invalid CORS request", content);
 	}
@@ -194,6 +216,7 @@ public class PersonControllerCorsJsonTest extends AbstractIntegrationTest {
 		person.setLastName("Stallman");
 		person.setAddress("New York City, New York, US");
 		person.setGender("Male");
+		person.setEnabled(true);
 	}
 
 }

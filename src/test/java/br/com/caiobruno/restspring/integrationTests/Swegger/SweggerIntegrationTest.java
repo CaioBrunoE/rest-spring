@@ -1,7 +1,7 @@
 package br.com.caiobruno.restspring.integrationTests.Swegger;
 
-import br.com.caiobruno.restspring.configs.TestConfig;
-import br.com.caiobruno.restspring.integrationTests.AbstractIntegrationTest;
+import br.com.caiobruno.restspring.configs.TestConfigs;
+import br.com.caiobruno.restspring.integrationTests.testcontainers.AbstractIntegrationTest;
 
 import static io.restassured.RestAssured.given;
 
@@ -17,7 +17,7 @@ public class SweggerIntegrationTest extends AbstractIntegrationTest {
 		var content =
 		given()
 				.basePath("/swagger-ui/index.html")
-				.port(TestConfig.SERVER_PORT)
+				.port(TestConfigs.SERVER_PORT)
 				.when()
 				   .get()
 				.then()

@@ -1,4 +1,4 @@
-package br.com.caiobruno.restspring.unittestes.mapper;
+package br.com.caiobruno.restspring.unittestes;
 
 import br.com.caiobruno.restspring.data.vo.v1.PersonVO;
 import br.com.caiobruno.restspring.mapper.DozerMapper;
