@@ -40,6 +40,7 @@ public class AuthControllerYamlTest extends AbstractIntegrationTest {
         objectMapper = new YMLMapper();
     }
 
+
     @Test
     @Order(1)
     public void testSignin() throws JsonMappingException, JsonProcessingException {

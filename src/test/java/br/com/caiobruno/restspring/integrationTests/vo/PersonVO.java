@@ -1,7 +1,10 @@
 package br.com.caiobruno.restspring.integrationTests.vo;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
+
 import java.util.Objects;
 
+@XmlRootElement
 public class PersonVO {
     private static final long serialVersionUID = 1L;
 

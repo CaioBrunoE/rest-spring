@@ -1,9 +1,7 @@
 package br.com.caiobruno.restspring.integrationTests.controller.withxml;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
 import java.util.List;
@@ -13,6 +11,8 @@ import br.com.caiobruno.restspring.integrationTests.testcontainers.AbstractInteg
 import br.com.caiobruno.restspring.integrationTests.vo.AccountCredentialsVO;
 import br.com.caiobruno.restspring.integrationTests.vo.BookVO;
 import br.com.caiobruno.restspring.integrationTests.vo.TokenVO;
+import br.com.caiobruno.restspring.integrationTests.vo.pagedmodels.PagedModelBook;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -21,10 +21,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -55,29 +55,43 @@ public class BookControllerXmlTest extends AbstractIntegrationTest {
 
         AccountCredentialsVO user = new AccountCredentialsVO("caio", "admin123");
 
-        var accessToken = given()
+        Response response = given()
                 .basePath("/auth/signin")
                 .port(TestConfigs.API_PORT)
                 .contentType(TestConfigs.CONTENT_TYPE_XML)
                 .accept(TestConfigs.CONTENT_TYPE_XML)
                 .body(user)
                 .when()
-                .post()
-                .then()
-                .statusCode(200)
-                .extract()
-                .body()
-                .as(TokenVO.class)
-                .getAccessToken();
+                .post();
+
+        response.then().statusCode(200);
+
+        String content = response.getBody().asString();
+
+        TokenVO tokenVO;
+        try {
+            tokenVO = objectMapper.readValue(content, TokenVO.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao desserializar o XML para a classe TokenVO.", e);
+        }
+
+
+        assertNotNull(tokenVO, "O TokenVO não deve ser nulo");
+        assertNotNull(tokenVO.getAccessToken(), "O token de acesso não deve ser nulo");
+        assertFalse(tokenVO.getAccessToken().isEmpty(), "O token de acesso não deve estar vazio");
+
 
         specification = new RequestSpecBuilder()
-                .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
+                .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + tokenVO.getAccessToken())
                 .setBasePath("/api/book/v1")
                 .setPort(TestConfigs.API_PORT)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
                 .build();
     }
+
+
 
     @Test
     @Order(1)
@@ -188,6 +202,7 @@ public class BookControllerXmlTest extends AbstractIntegrationTest {
         var content = given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_XML)
                 .accept(TestConfigs.CONTENT_TYPE_XML)
+                .queryParams("page", 0 , "limit", 12, "direction", "asc")
                 .when()
                 .get()
                 .then()
@@ -196,7 +211,8 @@ public class BookControllerXmlTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        List<BookVO> books = objectMapper.readValue(content, new TypeReference<List<BookVO>>() {});
+        PagedModelBook wrapper = objectMapper.readValue(content, PagedModelBook.class);
+        List<BookVO> books = wrapper.getContent();
 
         BookVO foundBookOne = books.get(0);
 
@@ -205,9 +221,9 @@ public class BookControllerXmlTest extends AbstractIntegrationTest {
         assertNotNull(foundBookOne.getAuthor());
         assertNotNull(foundBookOne.getPrice());
         assertTrue(foundBookOne.getId() > 0);
-        assertEquals("Working effectively with legacy code", foundBookOne.getTitle());
-        assertEquals("Michael C. Feathers", foundBookOne.getAuthor());
-        assertEquals(49.00, foundBookOne.getPrice());
+        assertEquals("Big Data: como extrair volume, variedade, velocidade e valor da avalanche de informação cotidiana", foundBookOne.getTitle());
+        assertEquals("Viktor Mayer-Schonberger e Kenneth Kukier", foundBookOne.getAuthor());
+        assertEquals(54.00, foundBookOne.getPrice());
 
         BookVO foundBookFive = books.get(4);
 
@@ -216,9 +232,9 @@ public class BookControllerXmlTest extends AbstractIntegrationTest {
         assertNotNull(foundBookFive.getAuthor());
         assertNotNull(foundBookFive.getPrice());
         assertTrue(foundBookFive.getId() > 0);
-        assertEquals("Code complete", foundBookFive.getTitle());
-        assertEquals("Steve McConnell", foundBookFive.getAuthor());
-        assertEquals(58.0, foundBookFive.getPrice());
+        assertEquals("Domain Driven Design", foundBookFive.getTitle());
+        assertEquals("Eric Evans", foundBookFive.getAuthor());
+        assertEquals(92.00, foundBookFive.getPrice());
     }
 
 
@@ -228,7 +244,7 @@ public class BookControllerXmlTest extends AbstractIntegrationTest {
 
         RequestSpecification specificationWithoutToken = new RequestSpecBuilder()
                 .setBasePath("/api/book/v1")
-                .setPort(TestConfigs.SERVER_PORT)
+                .setPort(TestConfigs.API_PORT)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
                 .build();
@@ -240,6 +256,34 @@ public class BookControllerXmlTest extends AbstractIntegrationTest {
                 .get()
                 .then()
                 .statusCode(403);
+    }
+
+    @Test
+    @Order(7)
+    public void testHATEOAS() throws JsonMappingException, JsonProcessingException {
+
+        var content = given().spec(specification)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
+                .queryParams("page", 0 , "size", 12, "direction", "asc")
+                .when()
+                .get()
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .asString();
+
+        assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/book/v1/3</href></links>"));
+        assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/book/v1/5</href></links>"));
+        assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/book/v1/7</href></links>"));
+
+        assertTrue(content.contains("<links><rel>first</rel><href>http://localhost:8888/api/book/v1?direction=asc&amp;page=0&amp;size=12&amp;sort=title,asc</href></links>"));
+        assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/book/v1?page=0&amp;size=12&amp;direction=asc</href></links>"));
+        assertTrue(content.contains("<links><rel>next</rel><href>http://localhost:8888/api/book/v1?direction=asc&amp;page=1&amp;size=12&amp;sort=title,asc</href></links>"));
+        assertTrue(content.contains("<links><rel>last</rel><href>http://localhost:8888/api/book/v1?direction=asc&amp;page=1&amp;size=12&amp;sort=title,asc</href></links>"));
+
+        assertTrue(content.contains("<page><size>12</size><totalElements>15</totalElements><totalPages>2</totalPages><number>0</number></page>"));
     }
 
     private void mockBook() {
