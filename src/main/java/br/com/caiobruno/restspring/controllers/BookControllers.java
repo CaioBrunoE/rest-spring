@@ -98,7 +98,7 @@ public class BookControllers {
             consumes = {MediaType.APLICATION_JSON, MediaType.APLICATION_XML, MediaType.APLICATION_YML},
             produces = {MediaType.APLICATION_JSON, MediaType.APLICATION_XML, MediaType.APLICATION_YML})
     @Operation(summary = "Update Booka", description = "Update Books",
-            tags = {"Booka"},
+            tags = {"Books"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
                             content = @Content(schema = @Schema(implementation = PersonVO.class))

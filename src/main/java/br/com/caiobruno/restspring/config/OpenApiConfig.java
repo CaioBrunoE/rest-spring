@@ -15,9 +15,9 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(
                         new Info()
-                                .title("RESTfull API with Java 21 and Spring Boot ")
+                                .title("RESTFULL API with Java 21 and Spring Boot ")
                                 .version("v1")
-                                .description("Api constriuda com fins de aprimorar minhas habilidades .")
+                                .description("API construída com o fim de aprimorar minhas habilidades.")
                                 .termsOfService("https://www.linkedin.com/in/caio-bruno-elias-263249234/")
                                 .license(new License()
                                         .name("Apache 2.0")
