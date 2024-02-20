@@ -1,15 +1,20 @@
 server:
   port: ${port:8888}
-#Cors
-cors:
-originPatterns: http://localhots:3000,http://localhots:8080,https://erudio.com.br
 
-#Security
+# Cors
+cors:
+  originPatterns: http://localhost:3000, http://localhost:8080, https://erudio.com.br
+
+file:
+  upload-dir: /Upload-dir
+
+# Security
 security:
   jwt:
     token:
       secret-key: 53cr737
       expire-length: 3600000
+
 # Configuração do MySQL
 spring:
   datasource:
@@ -17,11 +22,19 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
       properties:
         hibernate:
           dialect: org.hibernate.dialect.MySQLDialect
-    show-sql: true
+    show-sql: false
+
+    servlet:
+      multipart:
+        enabled: true
+        file-size-threshold: 2KB
+        max-file-size: 200MB
+        max-request-size: 215MB
+
 spring-doc:
   pathsToMatch:
     - /auth/**
