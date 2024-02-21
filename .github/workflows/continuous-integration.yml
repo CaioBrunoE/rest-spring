@@ -26,10 +26,6 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build Application JAR
-        working-directory: ./workspaceSpring/rest-spring
-        run: mvn clean package -DskipTest
-
       - name: Docker Compose Build
         working-directory: ./workspaceSpring/rest-spring
         run: docker-compose up -d --build
