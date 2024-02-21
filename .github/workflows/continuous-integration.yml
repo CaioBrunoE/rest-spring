@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -27,11 +27,11 @@ jobs:
           cache: maven
 
       - name: Build Application JAR
-        working-directory: C:\workspaceSpring\rest-spring
+        working-directory: /workspaceSpring/rest-spring
         run: mvn clean package
 
       - name: Docker Compose Build
-        working-directory: C:\workspaceSpring\rest-spring
+        working-directory: /workspaceSpring/rest-spring
         run: docker-compose up -d --build
 
       - name: Push to Docker Hub container registry
