@@ -27,7 +27,7 @@ jobs:
           cache: maven
 
       - name: Docker Compose Build
-        working-directory: ./workspaceSpring/rest-spring
+        working-directory: rest-spring
         run: docker-compose up -d --build
 
       - name: Push to Docker Hub container registry
