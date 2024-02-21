@@ -18,7 +18,7 @@ security:
 # Configuração do MySQL
 spring:
   datasource:
-    url: jdbc:mysql://localhost:8090/person?useTimezone=true&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3308/person?useTimezone=true&serverTimezone=UTC
   jpa:
     open-in-view: false
     hibernate:
