@@ -27,11 +27,11 @@ jobs:
           cache: maven
 
       - name: Build Application JAR
-        working-directory: /home/runner/work/rest-spring/rest-spring  # Ajuste do caminho do diretório
+        working-directory: /home/runner/work/rest-spring/rest-spring 
         run: mvn clean package -DskipTests
 
       - name: Docker Compose Build
-        working-directory: /home/runner/work/rest-spring/rest-spring  # Ajuste do caminho do diretório
+        working-directory: /home/runner/work/rest-spring/rest-spring  
         run: docker-compose up -d --build
 
       - name: Push to Docker Hub container registry
